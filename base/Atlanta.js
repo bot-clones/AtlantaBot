@@ -1,7 +1,6 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Util, Client, Collection } = require("discord.js");
 const { GiveawaysManager } = require("discord-giveaways");
 const { Player } = require("discord-player");
-const { Client, Collection } = require("discord.js");
 const { Client: Joker } = require("blague.xyz");
 
 const util = require("util"),
@@ -23,6 +22,7 @@ class Atlanta extends Client {
 		super(options);
 		this.config = require("../config"); // Load the config file
 		this.customEmojis = require("../emojis.json"); // load the bot's emojis
+		this.languages = require("../languages/language-meta.json"); // Load the bot's languages
 		this.commands = new Collection(); // Creates new commands collection
 		this.aliases = new Collection(); // Creates new command aliases collection
 		this.logger = require("../helpers/logger"); // Load the logger file
@@ -72,14 +72,18 @@ class Atlanta extends Client {
 				}));
 			})
 			.on("searchResults", (message, query, tracks) => {
-				if (tracks.length > 20) tracks = tracks.slice(0, 20);
+				if (tracks.length > 10) tracks = tracks.slice(0, 10);
 				const embed = new MessageEmbed()
-					.setDescription(tracks.map((t, i) => `**${++i} -** ${t.title}`).join("\n"))
+					.setDescription(Util.escapeSpoiler(tracks.map((t, i) => `**${++i} -** ${t.title}`).join("\n")))
 					.setFooter(message.translate("music/play:RESULTS_FOOTER"))
 					.setColor(this.config.embed.color);
 				message.channel.send(embed);
 			})
-			.on("searchInvalidResponse", (message, query, tracks) => {
+			.on("searchInvalidResponse", (message, query, tracks, content, collector) => {
+				if (content === "cancel") {
+					collector.stop();
+					return message.success("music/play:RESULTS_CANCEL");
+				}
 				message.error("misc:INVALID_NUMBER_RANGE", {
 					min: 1,
 					max: tracks.length
@@ -95,7 +99,7 @@ class Atlanta extends Client {
 				message.error("music/play:NO_RESULT");
 			})
 			.on("queueEnd", (message) => {
-				message.channel.send("music/play:QUEUE_ENDED");
+				message.success("music/play:QUEUE_ENDED");
 			})
 			.on("playlistAdd", (message, queue, playlist) => {
 				message.success("music/play:ADDED_QUEUE_COUNT", {
@@ -121,12 +125,20 @@ class Atlanta extends Client {
 					case "NotPlaying":
 						message.error("music/play:NOT_PLAYING");
 						break;
+					case "LiveVideo":
+						message.error("music/play:LIVE_VIDEO");
+						break;
+					default:
+						message.error("music/play:ERR_OCCURRED", {
+							error
+						});
+						break;
 				}
 			});
 
 
 		this.giveawaysManager = new GiveawaysManager(this, {
-			storage: "../giveaways.json",
+			storage: "./giveaways.json",
 			updateCountdownEvery: 10000,
 			default: {
 				botsCanWin: false,
@@ -138,7 +150,7 @@ class Atlanta extends Client {
 	}
 
 	get defaultLanguage(){
-		return this.config.languages.find((language) => language.default).name;
+		return this.languages.find((language) => language.default).name;
 	}
 
 	translate(key, args, locale){
@@ -150,7 +162,7 @@ class Atlanta extends Client {
 
 	printDate(date, format, locale){
 		if(!locale) locale = this.defaultLanguage;
-		const languageData = this.config.languages.find((language) => language.name === locale || language.aliases.includes(locale));
+		const languageData = this.languages.find((language) => language.name === locale || language.aliases.includes(locale));
 		if(!format) format = languageData.defaultMomentFormat;
 		return moment(new Date(date))
 			.locale(languageData.moment)
@@ -160,7 +172,7 @@ class Atlanta extends Client {
 	convertTime(time, type, noPrefix, locale){
 		if(!type) time = "to";
 		if(!locale) locale = this.defaultLanguage;
-		const languageData = this.config.languages.find((language) => language.name === locale || language.aliases.includes(locale));
+		const languageData = this.languages.find((language) => language.name === locale || language.aliases.includes(locale));
 		const m = moment(time)
 			.locale(languageData.moment);
 		return (type === "to" ? m.toNow(noPrefix) : m.fromNow(noPrefix));

@@ -111,7 +111,7 @@ module.exports = class {
 				const userData = await client.findOrCreateUser({ id: u.id });
 				if(userData.afk){
 					message.error("general/setafk:IS_AFK", {
-						username: u.tag,
+						user: u.tag,
 						reason: userData.afk
 					});
 				}
@@ -128,19 +128,27 @@ module.exports = class {
 		const args = message.content.slice((typeof prefix === "string" ? prefix.length : 0)).trim().split(/ +/g);
 		const command = args.shift().toLowerCase();
 		const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
-        
-		if(!cmd){
-			if(message.guild){
-				const customCommand = data.guild.customCommands.find((c) => c.name === command);
-				if(customCommand){
-					message.channel.send(customCommand.answer);
-				}
-				return;
-			} else {
-				return message.sendT("misc:HELLO_DM", {
-					username: message.author.username
-				});
-			}
+		
+		const customCommand = message.guild ? data.guild.customCommands.find((c) => c.name === command) : null;
+		const customCommandAnswer = customCommand ? customCommand.answer : "";
+		
+		if(!cmd && !customCommandAnswer && message.guild) return;
+		else if (!cmd && !customCommandAnswer && !message.guild) {
+			return message.sendT("misc:HELLO_DM", {
+				username: message.author.username
+			});
+		}
+
+		if(message.guild && data.guild.ignoredChannels.includes(message.channel.id) && !message.member.hasPermission("MANAGE_MESSAGES")){
+			message.delete();
+			message.author.send(message.translate("misc:RESTRICTED_CHANNEL", {
+				channel: message.channel.toString()
+			}));
+			return;
+		}
+
+		if (customCommandAnswer) {
+			return message.channel.send(customCommandAnswer);
 		}
 
 		if(cmd.conf.guildOnly && !message.guild){
@@ -173,14 +181,6 @@ module.exports = class {
 					list: neededPermissions.map((p) => `\`${p}\``).join(", ")
 				});
 			}
-			if(data.guild.ignoredChannels.includes(message.channel.id) && !message.member.hasPermission("MANAGE_MESSAGES")){
-				message.delete();
-				message.author.send(message.translate("misc:RESTRICTED_CHANNEL", {
-					channel: message.channel.toString()
-				}));
-				return;
-			}
-
 			if(!message.channel.permissionsFor(message.member).has("MENTION_EVERYONE") && (message.content.includes("@everyone") || message.content.includes("@here"))){
 				return message.error("misc:EVERYONE_MENTION");
 			}
@@ -262,7 +262,7 @@ async function updateXp(msg, data){
 			return;
 		}
 	}
-	// Records in the database the time when the member will be able to win xp again (3min)
+	// Records in the database the time when the member will be able to win xp again (1min)
 	const toWait = Date.now()+60000;
 	xpCooldown[msg.author.id] = toWait;
     

@@ -22,7 +22,7 @@ class Help extends Command {
 		// if a command is provided
 		if(args[0]){
 
-			const isCustom = (data.guild.customCommands ? data.guild.customCommands.find((c) => c.name === args[0]) : false);
+			const isCustom = (message.guild && data.guild.customCommands ? data.guild.customCommands.find((c) => c.name === args[0]) : false);
             
 			// if the command doesn't exist, error message
 			const cmd = this.client.commands.get(args[0]) || this.client.commands.get(this.client.aliases.get(args[0]));
@@ -123,7 +123,9 @@ class Help extends Command {
 		embed.addField("\u200B", message.translate("misc:STATS_FOOTER", {
 			donateLink: "https://patreon.com/Androz2091",
 			dashboardLink: "https://dashboard.atlanta-bot.fr",
-			inviteLink: await this.client.generateInvite("ADMINISTRATOR"),
+			inviteLink: await this.client.generateInvite({
+				permissions: ["ADMINISTRATOR"]
+			}),
 			githubLink: "https://github.com/Androz2091",
 			supportLink: "https://discord.atlanta-bot.fr"
 		}));

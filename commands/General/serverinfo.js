@@ -24,14 +24,14 @@ class Serverinfo extends Command {
 		if(args[0]){
 			let found = this.client.guilds.cache.get(args[0]);
 			if(!found){
-				found = this.client.cache.guilds.find((g) => g.name === args.join(" "));
+				found = this.client.guilds.cache.find((g) => g.name === args.join(" "));
 				if(found){
 					guild = found;
 				}
 			}
 		}
 
-		guild = await guild.fetch();
+		guild = await guild.members.fetch();
 
 		const embed = new Discord.MessageEmbed()
 			.setAuthor(guild.name, guild.iconURL({ dynamic: true }))

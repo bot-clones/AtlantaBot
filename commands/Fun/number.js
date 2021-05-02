@@ -41,7 +41,7 @@ class Number extends Command {
 				time: 480000 // 8 minutes
 			}
 		);
-		currentGames[message.author.id] = message.author.id;
+		currentGames[message.guild.id] = true;
 
 		collector.on("collect", async msg => {
 			if (!participants.includes(msg.author.id)) {
@@ -74,13 +74,13 @@ class Number extends Command {
 			}
 			if (parseInt(msg.content) < number) {
 				message.error("fun/number:BIG", {
-					user: message.author.toString(),
+					user: msg.author.toString(),
 					number: parsedNumber
 				});
 			}
 			if (parseInt(msg.content) > number) {
 				message.error("fun/number:SMALL", {
-					user: message.author.toString(),
+					user: msg.author.toString(),
 					number: parsedNumber
 				});
 			}
