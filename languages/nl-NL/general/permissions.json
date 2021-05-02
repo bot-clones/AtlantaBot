@@ -1,6 +1,0 @@
-{
-    "DESCRIPTION": "Toont de machtigingen van het lid in het kanaal",
-    "USAGE": "{{prefix}}permissions (@member)",
-    "EXAMPLES": "{{prefix}}permissions\n{{prefix}}permissions @Androz#2091",
-    "TITLE": "{{user}}'s permissions in {{channel}}"
-}

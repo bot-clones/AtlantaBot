@@ -1,7 +1,0 @@
-{
-    "DESCRIPTION": "Tölts fel egy szöveget a hastebinre!",
-    "USAGE": "{{prefix}}hastebin [szöveg]",
-    "EXAMPLES": "{{prefix}}hastebin Helló Világ!",
-    "MISSING_TEXT": "Please enter a valid text!",
-    "SUCCESS": "A feltöltés kész!"
-}

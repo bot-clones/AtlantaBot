@@ -1,8 +1,0 @@
-{
-    "DESCRIPTION": "Állítsd be a szerver prefixet!",
-    "USAGE": "{{prefix}}setprefix [prefix]",
-    "EXAMPLES": "{{prefix}}setprefix +",
-    "MISSING_PREFIX": "Adj meg egy érvényes prefixet!",
-    "TOO_LONG": "The prefix shouldn't exceed 5 characters!",
-    "SUCCESS": "The bot prefix has been set to `{{prefix}}`!"
-}
