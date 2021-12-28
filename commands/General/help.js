@@ -85,11 +85,11 @@ class Help extends Command {
 				.setFooter(this.client.config.embed.footer);
 
 			// and send the embed in the current channel
-			return message.channel.send(groupEmbed);
+			return message.channel.send({ embeds: [groupEmbed] });
 		}
 
 		const categories = [];
-		const commands = this.client.commands;
+		const commands = this.client.commands.filter((c) => c.conf.enabled);
 
 		commands.forEach((command) => {
 			if(!categories.includes(command.help.category)){
@@ -124,15 +124,15 @@ class Help extends Command {
 			donateLink: "https://patreon.com/Androz2091",
 			dashboardLink: "https://dashboard.atlanta-bot.fr",
 			inviteLink: await this.client.generateInvite({
-				permissions: ["ADMINISTRATOR"]
+				permissions: [Discord.Permissions.FLAGS.ADMINISTRATOR]
 			}),
 			githubLink: "https://github.com/Androz2091",
-			supportLink: "https://discord.atlanta-bot.fr"
+			supportLink: "https://discord.gg/NPkySYKMkN"
 		}));
 		embed.setAuthor(message.translate("general/help:TITLE", {
 			name: this.client.user.username
-		}), this.client.user.displayAvatarURL());
-		return message.channel.send(embed);
+		}), this.client.user.displayAvatarURL({ size: 512, dynamic: true, format: "png" }));
+		return message.channel.send({ embeds: [embed] });
 	}
 
 }

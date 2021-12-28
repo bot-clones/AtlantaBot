@@ -1,6 +1,6 @@
 const Command = require("../../base/Command.js"),
 	Discord = require("discord.js"),
-	fetch = require("node-fetch");
+	canvacord = require("canvacord");
 
 class Phcomment extends Command {
 	constructor (client) {
@@ -37,9 +37,12 @@ class Phcomment extends Command {
 			prefixEmoji: "loading"
 		});
 		try {
-			const res = await fetch(encodeURI(`https://nekobot.xyz/api/imagegen?type=phcomment&username=${user.username}&image=${user.displayAvatarURL({ format: "png", size: 512 })}&text=${text}`));
-			const json = await res.json();
-			const attachment = new Discord.MessageAttachment(json.message, "phcomment.png");
+			const buffer = await canvacord.Canvas.phub({
+				username: user.username,
+				image: user.displayAvatarURL({ format: "png" }),
+				message: text
+			});
+			const attachment = new Discord.MessageAttachment(buffer, "phcomment.png");
 			message.channel.send(attachment);
 			m.delete();
 		} catch(e){

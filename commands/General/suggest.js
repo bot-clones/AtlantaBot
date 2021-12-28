@@ -33,7 +33,7 @@ class Suggest extends Command {
 		const embed = new Discord.MessageEmbed()
 			.setAuthor(message.translate("general/suggest:TITLE", {
 				user: message.author.username
-			}), message.author.displayAvatarURL())
+			}), message.author.displayAvatarURL({ size: 512, dynamic: true, format: 'png' }))
 			.addField(message.translate("common:AUTHOR"), `\`${message.author.username}#${message.author.discriminator}\``, true)
 			.addField(message.translate("common:DATE"), message.printDate(new Date(Date.now())), true)
 			.addField(message.translate("common:CONTENT"), "**"+sugg+"**")
@@ -43,7 +43,7 @@ class Suggest extends Command {
 		const success = Discord.Util.parseEmoji(this.client.customEmojis.success).id;
 		const error = Discord.Util.parseEmoji(this.client.customEmojis.error).id;
         
-		suggChannel.send(embed).then(async (m) => {
+		suggChannel.send({ embeds: [embed] }).then(async (m) => {
 			await m.react(success);
 			await m.react(error);
 		});

@@ -46,12 +46,12 @@ class Fortniteshop extends Command {
 		const embed = new Discord.MessageEmbed()
 			.setAuthor(message.translate("general/fortniteshop:HEADER", {
 				date: message.printDate(new Date(Date.now()))
-			}), this.client.user.displayAvatarURL())
+			}), this.client.user.displayAvatarURL({ size: 512, dynamic: true, format: 'png' }))
 			.attachFiles(attachment)
 			.setImage("attachment://shop.png")
 			.setColor(this.client.config.embed.color)
 			.setFooter(this.client.config.embed.footer);
-		await message.channel.send(embed);
+		await message.channel.send({ embeds: [embed] });
 		await m.delete();
 		return;
         

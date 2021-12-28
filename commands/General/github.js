@@ -25,7 +25,7 @@ class Github extends Command {
 		const json = await res.json();
 
 		const embed = new Discord.MessageEmbed()
-			.setAuthor(this.client.user.tag, this.client.user.displayAvatarURL())
+			.setAuthor(this.client.user.tag, this.client.user.displayAvatarURL({ size: 512, dynamic: true, format: 'png' }))
 			.setDescription("["+message.translate("general/github:CLICK_HERE")+"](https://github.com/Androz2091/AtlantaBot)")
 			.addField("Stars", json.stargazers_count, true)
 			.addField("Forks", json.forks_count, true)
@@ -35,7 +35,7 @@ class Github extends Command {
 			.setColor(data.config.embed.color)
 			.setFooter(data.config.embed.footer);
 
-		message.channel.send(embed);
+		message.channel.send({ embeds: [embed] });
 	}
 
 }

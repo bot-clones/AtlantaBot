@@ -19,9 +19,9 @@ class Staff extends Command {
 	}
 
 	async run (message, args, data) {
-		const guild = await message.guild.members.fetch();
-		const administrators = guild.members.cache.filter((m) => m.hasPermission("ADMINISTRATOR") && !m.user.bot);
-		const moderators = guild.members.cache.filter((m) => !administrators.has(m.id) && m.hasPermission("MANAGE_MESSAGES") && !m.user.bot);
+		await message.guild.members.fetch();
+		const administrators = message.guild.members.cache.filter((m) => m.permissions.has("ADMINISTRATOR") && !m.user.bot);
+		const moderators = message.guild.members.cache.filter((m) => !administrators.has(m.id) && m.permissions.has("MANAGE_MESSAGES") && !m.user.bot);
 		const embed = new Discord.MessageEmbed()
 			.setAuthor(message.translate("general/staff:TITLE", {
 				guild: message.guild.name
@@ -30,7 +30,7 @@ class Staff extends Command {
 			.addField(message.translate("general/staff:MODS"), (moderators.size > 0 ? moderators.map((m) => `${this.client.customEmojis.status[m.presence.status]} | ${m.user.tag}`).join("\n") : message.translate("general/staff:NO_MODS")))
 			.setColor(data.config.embed.color)
 			.setFooter(data.config.embed.footer);
-		message.channel.send(embed);
+		message.channel.send({ embeds: [embed] });
 	}
 
 }

@@ -38,7 +38,7 @@ class Stop extends Command {
 			.setFooter(data.config.embed.footer)
 			.setColor(data.config.embed.color);
 
-		const m = await message.channel.send(embed);
+		const m = await message.channel.send({ embeds: [embed] });
 
 		if(members.size > 1){
             
@@ -50,7 +50,7 @@ class Stop extends Command {
 				voteCount: 0,
 				requiredCount: mustVote
 			}));
-			m.edit(embed);
+			m.edit({ embeds: [embed] });
     
 			const filter = (reaction, user) => {
 				const member = message.guild.members.cache.get(user.id);
@@ -69,14 +69,14 @@ class Stop extends Command {
 				if(haveVoted >= mustVote){
 					this.client.player.stop(message);
 					embed.setDescription(message.translate("music/stop:SUCCESS"));
-					m.edit(embed);
+					m.edit({ embeds: [embed] });
 					collector.stop(true);
 				} else {
 					embed.setDescription(message.translate("music/stop:VOTE_CONTENT", {
 						voteCount: haveVoted,
 						requiredCount: mustVote
 					}));
-					m.edit(embed);
+					m.edit({ embeds: [embed] });
 				}
 			});
 
@@ -89,7 +89,7 @@ class Stop extends Command {
 		} else {
 			this.client.player.stop(message);
 			embed.setDescription(message.translate("music/stop:SUCCESS"));
-			m.edit(embed);
+			m.edit({ embeds: [embed] });
 		}
         
 	}

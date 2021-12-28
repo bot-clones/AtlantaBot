@@ -47,7 +47,7 @@ class Credits extends Command {
 		const embed = new Discord.MessageEmbed()
 			.setAuthor(message.translate("economy/money:TITLE", {
 				username: member.user.username
-			}), member.user.displayAvatarURL())
+			}), member.user.displayAvatarURL({ size: 512, dynamic: true, format: 'png' }))
 			.addField(message.translate("economy/profile:CASH"), message.translate("economy/profile:MONEY", {
 				money: memberData.money
 			}), true)
@@ -59,7 +59,7 @@ class Credits extends Command {
 			}), true)
 			.setColor(this.client.config.embed.color)
 			.setFooter(this.client.config.embed.footer);
-		message.channel.send(embed);
+		message.channel.send({ embeds: [embed] });
 	}
 
 }

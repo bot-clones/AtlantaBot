@@ -34,13 +34,13 @@ class ServersList extends Command {
 			.join("\n");
 
 		const embed = new Discord.MessageEmbed()
-			.setAuthor(message.author.tag, message.author.displayAvatarURL())
+			.setAuthor(message.author.tag, message.author.displayAvatarURL({ size: 512, dynamic: true, format: 'png' }))
 			.setColor(data.config.embed.color)
 			.setFooter(this.client.user.username)
 			.setTitle(`${message.translate("common:PAGE")}: ${page}/${Math.ceil(this.client.guilds.cache.size/10)}`)
 			.setDescription(description);
 
-		const msg = await message.channel.send(embed);
+		const msg = await message.channel.send({ embeds: [embed] });
         
 		await msg.react("⬅");
 		await msg.react("➡");
@@ -76,7 +76,7 @@ class ServersList extends Command {
 					.setDescription(description);
             
 				// Edit the message 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed]});
             
 			}
 
@@ -106,7 +106,7 @@ class ServersList extends Command {
 					.setDescription(description);
             
 				// Edit the message 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 
 			}
 
